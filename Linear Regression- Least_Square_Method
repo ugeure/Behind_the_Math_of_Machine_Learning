@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 31 01:43:59 2020
+
+@author: ugeure
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+#intercept and slope of this line
+#least square method
+#to find b0 and b1 for our regression
+def find_b_one_b_zero(x_i,y_i):
+    y_mean=y_i.mean()
+    x_mean=x_i.mean()
+    
+    i,upperside,lowerside=0,0,0
+    while i<x_i.size:
+        upperside = (x_i[0][i]-x_mean)*(y_i[0][i]-y_mean) + upperside
+        lowerside = (x_i[0][i]-x_mean)**2 + lowerside
+        i+=1
+    
+    b_1 = upperside/lowerside
+    b_0 = y_mean- (b_1*x_mean)
+    
+    return b_0,b_1
+
+
+#centroid of this line
+def centroid(x_i,y_i):
+    x_mean=x_i.mean()
+    y_mean=y_i.mean()
+    return x_mean,y_mean
+
+#line fitting to data. Tofind predicted values
+def predict(b_0,b_1,x):
+    result=b_0+b_1*x
+    return result
+
+#finding r2 score to learn our models accuracy
+def ssr_over_sst(y_ii,b0,b1,x_ii):
+    sst=0
+    sse=0
+    ssr=0
+    i,j=0,0
+    y_head = np.zeros(x_ii.size,dtype=float).reshape(-1,1).T
+     
+    while i<x_ii.size:
+        y_head[0][i] = b0 + (b1 * x_ii[0][i])
+        i+=1
+    
+    while j<x_ii.size:
+        sst = (y_ii[0][j]-y_ii.mean())**2  + sst
+        sse = (y_ii[0][j]-y_head[0][j])**2 + sse
+        j+=1
+        ssr=sst-sse
+    #root mean square error 
+    rmse=sse/(y_ii.size-2) #r2 score
+    return ssr/sst,rmse
+
+    
+    
+x_series=np.array([1,2,3,4,5,6,7,8,9,10],dtype=float).reshape(-1,1).T
+y_series=np.array([2,3,4,6,7,9,11,8,15,12]).reshape(-1,1).T
+b0,b1=find_b_one_b_zero(x_series,y_series)
+#predict(b0,b1,7)
+#rmse and ssr/sst ratio to learn r2 score
+ssr_sst,rmse = ssr_over_sst(y_series,b0,b1,x_series)
+
